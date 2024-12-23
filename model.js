@@ -13,7 +13,7 @@ const uri = "mongodb+srv://hardik286:mongodbsucks@cluster0.uz7pb.mongodb.net/?re
 
 mongoose.connect(uri, { useNewUrlParser: true });
 
-const userSchema = new mongoose.Schema({
+const userSchema2 = new mongoose.Schema({
   username: {
     type: String,
     required: true,
@@ -21,23 +21,26 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-const exerciseSchema = new mongoose.Schema({
+const exerciseSchema2 = new mongoose.Schema({
     userId: {
         type: String,
-        required: true
+        required: true,
+        unique:false
     },
     description: {
         type: String,
-        required: true
+        required: true,
+        unique:false
     },
     duration: {
         type: Number,
-        required: true
+        required: true,
+        unique:false
     },
     date: {
         type: Date
     }
 });
 
-exports.User = mongoose.model('User', userSchema);
-exports.Exercise = mongoose.model('Exercise', exerciseSchema);
+exports.User2 = mongoose.model('User2', userSchema2);
+exports.Exercise2 = mongoose.model('Exercise2', exerciseSchema2);
