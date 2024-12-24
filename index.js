@@ -33,7 +33,7 @@ app.post('/api/users', async function(req, res){
 
 app.post('/api/users/:_id/exercises', async function(req, res){
   let userId = req.params._id,
-   description = req.body.description,
+   {description, duration, date} = req.body,
    user, result
 
   try {
@@ -65,16 +65,34 @@ app.get('/api/users/:_id/logs', async function(req, res){
     {from, to, limit} = req.query,
     user,
     exercises 
+  if(!from){
+    from = new Date(0).toDateString();
+  }
+  else
+    from = new Date(from).toDateString();
+  if(!to){
+    to = new Date().toDateString();
+  }
+  else
+    to = new Date(to).toDateString();
   try{
-    user = await User2.findById(userId);
+    user = await User2.findById(userId)
+    // exercises = await Exercise2.find({userId: userId});
     exercises = await Exercise2.find({userId: userId, date: {$gte: from, $lte: to}}, null, {limit: limit});
   }
   catch(err){
+    return res.json(err);
+  }
+  if(!user){
     return res.json({error: 'User not found'});
   }
   return res.json({
     ...user._doc, 
-    log: exercises,
+    log: exercises.map(exercise => ({
+      description: exercise.description,
+      duration: exercise.duration,
+      date: exercise.date.toDateString()
+    })),
     count: exercises.length
   });
 });
