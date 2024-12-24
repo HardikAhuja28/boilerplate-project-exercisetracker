@@ -75,9 +75,12 @@ app.get('/api/users/:_id/logs', async function(req, res){
   }
   else
     to = new Date(to).toDateString();
+  if(!limit){
+    limit = 0;
+  }
   try{
     user = await User2.findById(userId)
-    exercises = await Exercise2.find({userId: userId});
+    exercises = await Exercise2.find({userId: userId, date: {$gte: from, $lte: to}}, null, {limit: limit});
   }
   catch(err){
     return res.json(err);
@@ -85,8 +88,6 @@ app.get('/api/users/:_id/logs', async function(req, res){
   if(!user){
     return res.json({error: 'User not found'});
   }
-  exercises = exercises.filter(exercise => exercise.date >= new Date(from) && exercise.date <= new Date(to))
-  .slice(0, limit);
   return res.json({
     ...user._doc, 
     log: exercises.map(exercise => ({
